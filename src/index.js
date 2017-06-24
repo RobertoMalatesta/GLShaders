@@ -1,4 +1,4 @@
-import Render from './ObjectsRender.js';
+import Render from './Render.js';
 import { description, version } from '../version.json';
 require('../resources/styles/styles.css');
 

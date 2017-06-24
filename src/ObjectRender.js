@@ -1,5 +1,4 @@
 import THREE from './Three';
-import { Generator } from './SimplexNoise';
 import fragmentShader from './shader/displacement/fragmentShader.js';
 import vertexShader from './shader/displacement/vertexShader.js';
 // import dat from 'dat-gui';
@@ -21,7 +20,6 @@ export default class Render {
     this.far = 10000;
     this.frame = 0;
     this.start = Date.now();
-    this.generator = new Generator(10);
     window.addEventListener('resize', this.resize, true);
     window.addEventListener('click', this.stats, true);
     // this.createGUI();

@@ -1,8 +1,7 @@
-import THREE from './Three';
-import { Generator } from './SimplexNoise';
-import fragmentShader from './shader/fragmentShader2.js';
-import vertexShader from './shader/vertexShader2.js';
-// import dat from 'dat-gui';
+import fragmentSource from './shader/grid/fragmentShader.js';
+import vertexSource from './shader/grid/vertexShader.js';
+import Canvas from './Canvas';
+
 
 // Render Class Object //
 export default class Render {
@@ -12,129 +11,96 @@ export default class Render {
     this.far = 10000;
     this.frame = 0;
     this.start = Date.now();
-    this.generator = new Generator(10);
-    window.addEventListener('resize', this.resize, true);
-    window.addEventListener('click', this.stats, true);
-    // this.createGUI();
-    this.setViewport();
-    this.init();
+    // Set Up canvas and surface object //
+    this.can = new Canvas();
+    this.shaderCanvas = this.can.createCanvas('GLShaders');
+    this.gl = this.shaderCanvas.surface;
+    this.canvas = this.shaderCanvas.canvas;
+    this.width = this.shaderCanvas.width;
+    this.height = this.shaderCanvas.height;
+    this.gl.viewport(0, 0, this.width, this.height);
+    window.addEventListener('resetCanvas', this.resize, true);
+    this.initGraphics();
+    this.renderLoop();
   }
 
-  init = () => {
-    this.setRender();
-    this.setCamera();
-    this.setControls();
-    this.setSkyBox();
-    this.setLights();
-    this.setScene();
-    this.renderLoop();
+  initShaders = () => {
+    this.vertexShader = this.gl.createShader(this.gl.VERTEX_SHADER);
+    this.gl.shaderSource(this.vertexShader, vertexSource);
+    this.gl.compileShader(this.vertexShader);
+
+
+    this.fragmentShader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
+    this.gl.shaderSource(this.fragmentShader, fragmentSource);
+    this.gl.compileShader(this.fragmentShader);
+
+    const program = this.gl.createProgram();
+    this.gl.attachShader(program, this.vertexShader);
+    this.gl.attachShader(program, this.fragmentShader);
+    this.gl.linkProgram(program);
+    this.gl.useProgram(program);
+
+    return program;
   };
 
-  stats = () => {
-    console.log(this.camera.position);
-  };
+  initGraphics = () => {
+    this.gl.viewport(0, 0, this.width, this.height);
 
-  setRender = () => {
-    // Set Render and Scene //
-    this.renderer = new THREE.WebGLRenderer();
-    this.renderer.setSize(this.width, this.height);
-    this.renderer.setPixelRatio(this.devicePixelRatio);
-    this.renderer.shadowMapEnabled = true;
-    document.body.appendChild(this.renderer.domElement);
-    // Root Scene Element //
-    this.scene = new THREE.Scene();
-  };
+    this.canvas.addEventListener('mousemove', (e) => {
+      this.mouseX = e.pageX / this.canvas.width;
+      this.mouseY = e.pageY / this.canvas.height;
+    }, false);
 
-  setCamera = () => {
-    this.camera = new THREE.PerspectiveCamera(
-        this.viewAngle,
-        this.aspect,
-        this.near,
-        this.far
+    this.program = this.initShaders();
+    this.buffer = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
+
+    this.gl.bufferData(
+      this.gl.ARRAY_BUFFER,
+      new Float32Array([-1, 1, -1, -1, 1, -1, 1, 1]),
+      this.gl.STATIC_DRAW
     );
-    this.scene.add(this.camera);
-    this.camera.position.set(0, 12, 24);
-    this.camera.lookAt(this.scene.position);
-  };
 
-  setControls = () => {
-    this.controls = new THREE.OrbitControls(this.camera);
-    this.controls.maxDistance = 3000;
-    this.controls.minDistance = 0.1;
-  };
+    this.vPosition = this.gl.getAttribLocation(this.program, 'vPosition');
+    this.gl.vertexAttribPointer(
+      this.vPosition,
+      2,
+      this.gl.FLOAT,
+      false,
+      0,
+      0
+    );
+    this.gl.enableVertexAttribArray(this.vPosition);
 
-  setLights = () => {
-    // Set AmbientLight //
-    this.ambient = new THREE.AmbientLight(0xAAAAAA);
-    this.ambient.position.set(0, 45, 0);
-    this.scene.add(this.ambient);
-
-    this.spotLight = new THREE.DirectionalLight(0x0666666);
-    this.spotLight.position.set(-6, 30, 80);
-    this.spotLight.castShadow = true;
-    this.scene.add(this.spotLight);
-  };
-
-  setScene = () => {
-    this.meshMaterial = new THREE.ShaderMaterial({
-      uniforms: {
-        tExplosion: {
-          type: 't',
-          value: THREE.ImageUtils.loadTexture(explosion),
-        },
-        time: {
-          type: 'f',
-          value: 0.0,
-        },
-        timeScale: {
-          type: 'f',
-          value: 2.0,
-        }
-      },
-      vertexShader,
-      fragmentShader,
-    });
-    this.scene.background = this.meshMaterial;
+    this.ut = this.gl.getUniformLocation(this.program, 'time');
+    this.um = this.gl.getUniformLocation(this.program, 'mouse');
+    this.resolution = new Float32Array([this.canvas.width, this.canvas.height]);
+    this.gl.uniform2fv(
+      this.gl.getUniformLocation(this.program, 'resolution'),
+      this.resolution
+    );
   };
 
   checkObjects = () => {
-    const timeStop = this.frame * 0.2;
-    const angleRotate = timeStop * Math.PI / 180;
-    const timeScale = 1 - Math.sin(angleRotate) * 0.1;
-    this.meshMaterial.uniforms.timeScale.value = timeScale;
+    this.gl.uniform1f(this.ut, (Date.now() - this.start) / 1000);
+    this.gl.uniform2fv(this.um, new Float32Array([this.mouseX, this.mouseY]));
+    this.gl.drawArrays(this.gl.TRIANGLE_FAN, 0, 4);
   };
 
-  setViewport = () => {
-    this.width = window.innerWidth;
-    this.height = window.innerHeight;
-    this.aspect = this.width / this.height;
-    this.devicePixelRatio = window.devicePixelRatio;
-  };
-
-  resize = () => {
-    this.setViewport();
-    this.camera.updateProjectionMatrix();
-    this.renderer.setSize(this.width, this.height);
-  };
-
-  rgbToHex = (r, g, b) => {
-    const hex = ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-    return `0x${hex}`;
-  };
-
-  renderScene = () => {
-    this.renderer.render(this.scene, this.camera);
-  };
+  resetCanvas = () => {
+    window.cancelAnimationFrame(this.animation);
+    this.shaderCanvas = this.can.setViewport(this.canvas);
+    this.gl = this.shaderCanvas.surface;
+    this.canvas = this.shaderCanvas.canvas;
+    this.width = this.shaderCanvas.width;
+    this.height = this.shaderCanvas.height;
+    this.gl.viewport(0, 0, this.width, this.height);
+    this.renderLoop();
+  }
 
   renderLoop = () => {
     this.frame ++;
-    this.meshMaterial.uniforms.time.value = 0.00025 * (Date.now() - this.start);
     this.checkObjects();
-    this.renderScene();
     window.requestAnimationFrame(this.renderLoop);
-  };
-
-  // DATGUI STUFF HERE //
-  createGUI = () => {
   };
 }
