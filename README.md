@@ -2,21 +2,32 @@
 
   WIP - GLSHADERS experiments and testing as I learn three.js. More info to come soon [WIP]
 
-  Each render.js file is a mutation or experiment that can be pointed to in index.js
-
-  /src/Three.js is the import file that combines all required Three.js package files..
+  BaseRender.js => Basic Class that sets WebGL Canvas, Shaders and Programs up. 
 
   ```
-  import * as THREE from 'three'; // build/three.js from node_module/three
-  window.THREE = THREE;
-  require('three/examples/js/controls/OrbitControls.js');
-  require('three/examples/js/shaders/FresnelShader');
-  // ...etc for other items like Render Passes and Shaders
+  import fragmentSource from './shader/xxxx/fragmentShader.js';
+  import vertexSource from './shader/xxxx/vertexShader.js';
+  import BaseRender from './BaseRender.js';
+
+  // Render Class Object //
+  export default class Render extends BaseRender {
+    constructor() {
+      super();
+      this.init();
+    }
+
+    init = () => {
+      // Create Shaders which return as this.program //
+      this.createGraphics(vertexSource, fragmentSource);
+
+      this.canvas.addEventListener('mousemove', (e) => {
+        this.mouseX = e.pageX / this.canvas.width;
+        this.mouseY = e.pageY / this.canvas.height;
+      }, false);
+
+      .....
+    };
   ```
-
-  Current Mapping..
-  index.js points to => ObjectRender.js
-
 
 ## Run the example
   Requires Node v7.0.0 or greater
