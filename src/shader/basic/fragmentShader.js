@@ -1,6 +1,11 @@
-const fragmentShader = `varying vec2 vUv;
+const fragmentShader = `
+precision mediump float;
+
 void main() {
-    gl_FragColor = vec4( vec3( vUv, 0.5 ), 1.0 );
-}`;
+  // gl_FragColor is a special variable a fragment shader
+  // is responsible for setting
+  gl_FragColor = vec4(1, 0, 0.5, 1); // return redish-purple
+}
+`;
 
 export default fragmentShader;

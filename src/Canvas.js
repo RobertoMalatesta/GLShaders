@@ -12,6 +12,13 @@ export default class Canvas {
     this.height = height;
     canvasElement.width = this.width;
     canvasElement.height = this.height;
+    const canvasObject = {
+      surface: canvasElement.getContext('webgl'),
+      canvas: canvasElement,
+      width: this.width,
+      height: this.height,
+    };
+    return canvasObject;
   };
 
   createCanvas = (name) => {
@@ -25,6 +32,10 @@ export default class Canvas {
     this.setViewport(canvasElement);
     if (!document.getElementById(name)) {
       this.element.appendChild(canvasElement);
+    }
+    const canvasContext = canvasElement.getContext('webgl');
+    if (!canvasContext) {
+      console.error('no webgl avaiable');
     }
     const canvasObject = {
       surface: canvasElement.getContext('webgl'),

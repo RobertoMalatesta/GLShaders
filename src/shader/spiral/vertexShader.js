@@ -1,4 +1,4 @@
-// Alex Permyakov's futuristic grid shader
+
 const vertexShader = `
 attribute vec4 vPosition;
 void main (void) {
