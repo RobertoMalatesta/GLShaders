@@ -1,5 +1,5 @@
-import fragmentSource from './shader/spiral/fragmentShader.js';
-import vertexSource from './shader/spiral/vertexShader.js';
+import fragmentSource from './shader/position/fragmentShader.js';
+import vertexSource from './shader/position/vertexShader.js';
 import BaseRender from './BaseRender.js';
 
 // Render Class Object //

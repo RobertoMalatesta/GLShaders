@@ -13,6 +13,7 @@ export default class BaseRender {
     this.width = this.shaderCanvas.width;
     this.height = this.shaderCanvas.height;
     this.gl.viewport(0, 0, this.width, this.height);
+    this.clearCanvas();
     window.addEventListener('resize', this.resetCanvas, true);
   }
 
@@ -23,6 +24,7 @@ export default class BaseRender {
     this.width = this.shaderCanvas.width;
     this.height = this.shaderCanvas.height;
     this.gl.viewport(0, 0, this.width, this.height);
+    this.clearCanvas();
   };
 
   createShader = (type, source) => {
@@ -54,7 +56,9 @@ export default class BaseRender {
   };
 
   createGraphics = (vertexSource, fragmentSource) => {
+    // Create the Program //
     this.program = this.createProgram(vertexSource, fragmentSource);
+    // Create and Bind buffer //
     this.buffer = this.gl.createBuffer();
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
 
@@ -67,19 +71,28 @@ export default class BaseRender {
     this.vPosition = this.gl.getAttribLocation(this.program, 'vPosition');
     this.gl.vertexAttribPointer(
       this.vPosition,
-      2,
-      this.gl.FLOAT,
-      false,
-      0,
-      0
+      2,              // size: 2 components per iteration
+      this.gl.FLOAT,  // type: the data is 32bit floats
+      false,          // normalize: don't normalize the data
+      0,              // stride: 0 = move forward size * sizeof(type) each iteration to get the next position
+      0               // start at the beginning of the buffer
     );
     this.gl.enableVertexAttribArray(this.vPosition);
     this.importProgram();
   };
 
+  clearCanvas = () => {
+    this.gl.clearColor(0, 0, 0, 0);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+  };
+
   updateUniforms = () => {
     this.importUniforms();
-    this.gl.drawArrays(this.gl.TRIANGLE_FAN, 0, 4);
+    this.gl.drawArrays(
+      this.gl.TRIANGLE_FAN, // primitiveType
+      0,                    // Offset
+      4                     // Count
+    );
   };
 
   importProgram = () => {
