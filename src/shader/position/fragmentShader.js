@@ -6,7 +6,7 @@ uniform vec2 resolution;
 #define PI 3.14159265358979323846264
 
 float hash (float v) {
-  return smoothstep(0.1, 0.9, abs(sin(v))) * 10.0;
+  return smoothstep(0.1, 0.9, abs(sin(v) + cos(v + time))) * 15.0;
 }
 
 float dist(float a,float b,float c,float d) {
