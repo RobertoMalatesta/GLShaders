@@ -1,8 +1,12 @@
 # GLShaders
 
-  WIP - GLSHADERS experiments and testing as I learn three.js. More info to come soon [WIP]
+  WebGL/Three.js - My Experiments and testing renders as I learn GLSL SHADERS. The intent of this repo is to teach myself
+  WebGL and Shader technology, have a base class to create new projects and get some experience with WebGL and WebVR.
 
-  BaseRender.js => Basic Class that sets WebGL Canvas, Shaders and Programs up. 
+  Grid & Spiral shaders are from Alex Permyakov and are being used to deconstruct.
+  Displacement shader is used in three.js for a fireball mesh effect, built as a tutorial.
+
+  BaseRender.js => Basic Class that sets WebGL Canvas, Shaders and Programs up.
 
   ```
   import fragmentSource from './shader/xxxx/fragmentShader.js';

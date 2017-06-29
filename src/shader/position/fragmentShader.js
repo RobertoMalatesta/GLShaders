@@ -15,16 +15,23 @@ float dist(float a,float b,float c,float d) {
 
 void main() {
   vec2 q = gl_FragCoord.xy / resolution.xy;
-  vec2 p = -1.0 + 2.0 * q;
-  p.x *= resolution.x / resolution.y;
+  float r = abs(
+      sin(q.x + (time * 25.0) * PI / 180.0)
+  );
 
-  vec3 col = vec3(q.y, q.x, p.y);
-  vec3 row = vec3(p.x, q.x, q.y);
-  vec3 c = vec3(0.0);
-  c += col / (abs(tan(hash(p.x) + sin(time + p.y) + q.y * 10.0)));
-  c += row / (abs(tan(hash(p.y) + cos(time + p.x) + q.x * 10.0)));
-  c /= 6.0;
-  gl_FragColor = vec4(c, 1.0);
+  float g = abs(
+      cos(q.y + (time * 25.0) * PI / 180.0)
+  );
+
+  float c = hash(
+     sin(dist(q.x + time, q.y, 128.0, 128.0) / 23.0)
+   + sin(dist(q.x, q.y, 64.0, 64.0) / 23.0)
+   + sin(dist(q.x, q.y + time / 18.0, 192.0, 64.0) / 18.0)
+   + sin(dist(q.x, q.y, 192.0, 100.0) / 23.0) * 255.0
+ );
+  vec3 colorz = vec3(c, 1.0 - c, g * r);
+
+  gl_FragColor = vec4(colorz, 1.0);
 }
 `;
 
