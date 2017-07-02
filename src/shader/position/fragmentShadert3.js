@@ -153,7 +153,7 @@ float pnoise(vec3 P, vec3 rep)
   return 2.2 * n_xyz;
 }
 
-float turbulence( vec3 p ) {
+float turbulence(vec3 p) {
   float w = 100.0;
   float t = -.5;
   for (float f = 1.0 ; f <= 10.0 ; f++ ){
@@ -172,20 +172,24 @@ float dist(float a,float b,float c,float d) {
 }
 
 void main() {
-  vec2 q = gl_FragCoord.xy;
+  vec2 q = vUv;
   vec2 rz = resolution.xy;
-  float t = time * 55.0;
-  float noise = cnoise(vec3(q.x / dec, q.y / dec, time));
-  float d = abs(sin(dist(q.x, q.y, rz.x / 2.0, rz.y / 2.0) / 255.0 - time));
-  float e = abs(cos(dist(q.x, q.y, rz.x / 2.0, rz.y / 2.0) / 255.0 - time));
+  float adjustment = dec / 80.0;
+  float t = time * 0.1;
+  float noise = cnoise(vec3(q.x * adjustment, q.y * adjustment, t));
+  // noise += 10.0 *  -.10 * turbulence(vec3(q.x, q.y, t) * 2.5);
+  float d = (sin(dist(q.x, q.y, rz.x, rz.y) * 2.5 - time));
+
   float c = noise / d;
-  c += (noise / 3.0 ) * 0.1;
-  float r = abs(cos(c * 255.0 * PI / 180.0) * 1.0);
-  float g = abs(sin(e * angle * PI / 180.0) * 1.0);
-  float b = abs(sin(c * 255.0 * PI / 180.0) * 1.0);
+  c += (noise / 3.0 ) * 0.01;
+
+  float r = (sin(c * 250.0 * PI / 180.0) * 1.0);
+  float g = (cos(c * 255.0 * PI / 180.0) * 1.0);
+  float b = (sin(d * 255.0 * PI / 180.0) * 1.0);
 
   vec3 colorz = vec3(r, g, b);
-  gl_FragColor = vec4(colorz, 1.0);
+  float opacity = c / r;
+  gl_FragColor = vec4(colorz, opacity);
 }
 `;
 

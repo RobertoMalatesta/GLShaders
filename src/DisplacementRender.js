@@ -1,16 +1,17 @@
 import THREE from './Three';
-import fragmentShader from './shader/position/fragmentShadert3.js';
-import vertexShader from './shader/position/vertexShadert3.js';
-import dat from 'dat-gui';
+import fragmentShader from './shader/displacement/fragmentShader.js';
+import vertexShader from './shader/displacement/vertexShader.js';
+// import dat from 'dat-gui';
 
 // Skybox image imports //
-import xpos from '../resources/images/sky/posx.jpg';
-import xneg from '../resources/images/sky/negx.jpg';
-import ypos from '../resources/images/sky/posy.jpg';
-import yneg from '../resources/images/sky/negy.jpg';
-import zpos from '../resources/images/sky/posz.jpg';
-import zneg from '../resources/images/sky/negz.jpg';
-import skullModel from '../resources/models/skull.json';
+import xpos from '../resources/images/stairs/posx.jpg';
+import xneg from '../resources/images/stairs/negx.jpg';
+import ypos from '../resources/images/stairs/posy.jpg';
+import yneg from '../resources/images/stairs/negy.jpg';
+import zpos from '../resources/images/stairs/posz.jpg';
+import zneg from '../resources/images/stairs/negz.jpg';
+import explosion from '../resources/images/iceexplosion.png';
+
 // Render Class Object //
 export default class Render {
   constructor() {
@@ -19,10 +20,9 @@ export default class Render {
     this.far = 10000;
     this.frame = 0;
     this.start = Date.now();
-    this.angle = 255.0;
-    this.dec = 55.0;
     window.addEventListener('resize', this.resize, true);
     window.addEventListener('click', this.stats, true);
+    // this.createGUI();
     this.setViewport();
     this.init();
   }
@@ -34,37 +34,7 @@ export default class Render {
     this.setSkyBox();
     this.setLights();
     this.setScene();
-    this.createGUI();
     this.renderLoop();
-  };
-
-  createGUI = () => {
-    this.options = {
-      angle: this.angle,
-      dec: this.dec,
-    };
-    this.gui = new dat.GUI();
-    const folderRender = this.gui.addFolder('Render Options');
-
-    folderRender.add(this.options, 'angle', 1, 255).step(1)
-      .onFinishChange((value) => {
-        this.options.angle = value;
-        this.setOptions(this.options);
-      });
-    folderRender.add(this.options, 'dec', 1, 255).step(1)
-      .onFinishChange((value) => {
-        this.options.dec = value * 1.00;
-        this.setOptions(this.options);
-      });
-    folderRender.open();
-    this.setOptions(this.options);
-  };
-
-  setOptions = (options) => {
-    this.angle = options.angle || this.angle;
-    this.meshMaterial.uniforms.angle.value = this.angle;
-    this.dec = options.dec || this.dec;
-    this.meshMaterial.uniforms.dec.value = this.dec;
   };
 
   stats = () => {
@@ -90,7 +60,7 @@ export default class Render {
         this.far
     );
     this.scene.add(this.camera);
-    this.camera.position.set(0.072, 2.12, -11.00);
+    this.camera.position.set(0, 12, 24);
     this.camera.lookAt(this.scene.position);
   };
 
@@ -103,11 +73,11 @@ export default class Render {
   setLights = () => {
     // Set AmbientLight //
     this.ambient = new THREE.AmbientLight(0xAAAAAA);
-    this.ambient.position.set(1, 10, 3);
+    this.ambient.position.set(0, 45, 0);
     this.scene.add(this.ambient);
 
     this.spotLight = new THREE.DirectionalLight(0x0666666);
-    this.spotLight.position.set(-6, 8, 15);
+    this.spotLight.position.set(-6, 30, 80);
     this.spotLight.castShadow = true;
     this.scene.add(this.spotLight);
   };
@@ -121,54 +91,36 @@ export default class Render {
   };
 
   setScene = () => {
-    const uniforms = THREE.UniformsUtils.merge([
-      THREE.UniformsLib.shadowmap,
-      {
-        map: {
+    this.meshMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        tExplosion: {
           type: 't',
-          value: 1,
-          texture: null,
+          value: THREE.ImageUtils.loadTexture(explosion),
         },
         time: {
           type: 'f',
-          value: this.start,
+          value: 0.0,
         },
-        angle: {
+        timeScale: {
           type: 'f',
-          value: this.angle,
-        },
-        dec: {
-          type: 'f',
-          value: this.dec,
-        },
-        resolution: {
-          type: 'v2',
-          value: new THREE.Vector3(),
-        },
+          value: 2.0,
+        }
       },
-    ]);
-
-    this.meshMaterial = new THREE.ShaderMaterial({
-      uniforms,
       vertexShader,
       fragmentShader,
     });
-    this.meshMaterial.transparent = true;
-    this.meshMaterial.side = THREE.DoubleSide;
-    const objectLoader = new THREE.ObjectLoader();
-    this.skullObject = objectLoader.parse(skullModel);
-    this.skullObject.children[0].geometry.dynamic = true;
-    // this.skullObject.children[0].rotation.set(0, 0, this.zRotation);
-    this.skullObject.children[0].material = this.meshMaterial;
-    this.skullObject.children[0].castShadow = true;
-    this.skullObject.children[0].receiveShadow = true;
-    this.scene.add(this.skullObject);
+    this.fireball = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(7, 4),
+        this.meshMaterial
+    );
+    this.scene.add(this.fireball);
   };
 
   checkObjects = () => {
-    this.meshMaterial.uniforms.time.value = (Date.now() - this.start) / 1000;
-    this.meshMaterial.uniforms.needsUpdate = true;
-    this.skullObject.rotation.y = ((this.frame / 15) * (Math.PI / 180));
+    const timeStop = this.frame * 0.2;
+    const angleRotate = timeStop * Math.PI / 180;
+    const timeScale = 1 - Math.sin(angleRotate) * 0.1;
+    this.meshMaterial.uniforms.timeScale.value = timeScale;
   };
 
   setViewport = () => {
@@ -195,8 +147,13 @@ export default class Render {
 
   renderLoop = () => {
     this.frame ++;
+    this.meshMaterial.uniforms.time.value = 0.00025 * (Date.now() - this.start);
     this.checkObjects();
     this.renderScene();
     window.requestAnimationFrame(this.renderLoop);
+  };
+
+  // DATGUI STUFF HERE //
+  createGUI = () => {
   };
 }
