@@ -1,5 +1,5 @@
 import THREE from './Three';
-import fragmentShader from './shader/position/fragmentShadert302.js';
+import fragmentShader from './shader/position/fragmentShadert3.js';
 import vertexShader from './shader/position/vertexShadert3.js';
 import dat from 'dat-gui';
 
@@ -10,7 +10,7 @@ import ypos from '../resources/images/sky/posy.jpg';
 import yneg from '../resources/images/sky/negy.jpg';
 import zpos from '../resources/images/sky/posz.jpg';
 import zneg from '../resources/images/sky/negz.jpg';
-// import skullModel from '../resources/models/skull.json';
+import skullModel from '../resources/models/skull.json';
 // Render Class Object //
 export default class Render {
   constructor() {
@@ -19,8 +19,8 @@ export default class Render {
     this.far = 10000;
     this.frame = 0;
     this.start = Date.now();
-    this.angle = 200.0;
-    this.dec = 60.0;
+    this.angle = 255.0;
+    this.dec = 55.0;
     window.addEventListener('resize', this.resize, true);
     window.addEventListener('click', this.stats, true);
     this.setViewport();
@@ -155,29 +155,20 @@ export default class Render {
     });
     this.meshMaterial.transparent = true;
     this.meshMaterial.side = THREE.DoubleSide;
-
-    this.geoObject = new THREE.Mesh(
-        new THREE.SphereGeometry(3, 20, 20),
-        this.meshMaterial
-    );
-    this.scene.add(this.geoObject);
-    this.geoObject.castShadow = true;
-    this.geoObject.receiveShadow = true;
-
-    // const objectLoader = new THREE.ObjectLoader();
-    // this.skullObject = objectLoader.parse(skullModel);
-    // this.skullObject.children[0].geometry.dynamic = true;
-    // // this.skullObject.children[0].rotation.set(0, 0, this.zRotation);
-    // this.skullObject.children[0].material = this.meshMaterial;
-    // this.skullObject.children[0].castShadow = true;
-    // this.skullObject.children[0].receiveShadow = true;
-    // this.scene.add(this.skullObject);
+    const objectLoader = new THREE.ObjectLoader();
+    this.skullObject = objectLoader.parse(skullModel);
+    this.skullObject.children[0].geometry.dynamic = true;
+    // this.skullObject.children[0].rotation.set(0, 0, this.zRotation);
+    this.skullObject.children[0].material = this.meshMaterial;
+    this.skullObject.children[0].castShadow = true;
+    this.skullObject.children[0].receiveShadow = true;
+    this.scene.add(this.skullObject);
   };
 
   checkObjects = () => {
     this.meshMaterial.uniforms.time.value = (Date.now() - this.start) / 1000;
     this.meshMaterial.uniforms.needsUpdate = true;
-    this.geoObject.rotation.y = ((this.frame / 15) * (Math.PI / 180));
+    this.skullObject.rotation.y = ((this.frame / 15) * (Math.PI / 180));
   };
 
   setViewport = () => {
