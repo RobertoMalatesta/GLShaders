@@ -174,17 +174,22 @@ float dist(float a,float b,float c,float d) {
 void main() {
   vec2 q = vUv;
   vec2 rz = resolution.xy;
-  float xdec = dec * 0.01;
+  float adjustment = dec / 80.0;
+  float t = time * 0.1;
+  float noise = cnoise(vec3(q.x * adjustment, q.y * adjustment, t));
+  // noise += 10.0 *  -.10 * turbulence(vec3(q.x, q.y, t) * 2.5);
+  float d = (sin(dist(q.x, q.y, rz.x, rz.y) * 2.5 - time));
 
-  float noise = pnoise(vec3(q.x * xdec, q.y * xdec, time), vec3(25.0, 25.0, 25.0));
-  float c = turbulence(vec3(q.x * xdec, q.y * xdec, noise));
-  float r = abs(sin(c * 5.0));
-  float g = abs(cos(noise * 5.0)) * 0.5;
-  float b = abs(cos(c * 5.0));
+  float c = noise / d;
+  c += (noise / 3.0 ) * adjustment;
+
+  float r = (sin(c * 250.0 * PI / 180.0) * 1.0);
+  float g = (cos(c * (255.0 - angle) + PI / 180.0) * 1.0);
+  float b = (sin(d * 255.0 * PI / 180.0) * 1.0);
 
   vec3 colorz = vec3(r, g, b);
-  float o = b + noise;
-  gl_FragColor = vec4(colorz, o);
+  float opacity = c / r;
+  gl_FragColor = vec4(colorz, opacity);
 }
 `;
 

@@ -1,4 +1,4 @@
-import fragmentSource from './shader/position/fragmentShader.js';
+import fragmentSource from './shader/position/fragmentShader04.js';
 import vertexSource from './shader/position/vertexShader.js';
 import BaseRender from './BaseRender.js';
 import dat from 'dat-gui';
@@ -27,7 +27,7 @@ export default class Render extends BaseRender {
   createGUI = () => {
     this.options = {
       angle: this.angle,
-      dec: this.dec
+      dec: this.dec,
     };
     this.gui = new dat.GUI();
     const folderRender = this.gui.addFolder('Render Options');

@@ -176,14 +176,16 @@ void main() {
   vec2 rz = resolution.xy;
   float xdec = dec * 0.01;
 
-  float noise = pnoise(vec3(q.x * xdec, q.y * xdec, time), vec3(25.0, 25.0, 25.0));
+  float noise = pnoise(vec3(q. x* xdec, q.y * xdec, time), vec3(25.0, 25.0, 25.0));
   float c = turbulence(vec3(q.x * xdec, q.y * xdec, noise));
-  float r = abs(sin(c * 5.0));
-  float g = abs(cos(noise * 5.0)) * 0.5;
-  float b = abs(cos(c * 5.0));
+  float d = sin(dist(q.x, q.y, rz.x / 2.0, rz.y / 2.0) * PI / 180.0) * 100.0;
+  float xnoise = c / d;
+  float r = abs(sin(xnoise * 5.0));
+  float g = abs(sin(xnoise* 255.0 * PI / 180.0));
+  float b = abs(cos(xnoise * 5.0));
 
   vec3 colorz = vec3(r, g, b);
-  float o = b + noise;
+  float o = 1.0; // b + noise;
   gl_FragColor = vec4(colorz, o);
 }
 `;

@@ -1,15 +1,15 @@
 import THREE from './Three';
-import fragmentShader from './shader/position/fragmentShadert302.js';
-import vertexShader from './shader/position/vertexShadert3.js';
+import fragmentShader from './shader/texture/fragmentShadert3.js';
+import vertexShader from './shader/texture/vertexShadert3.js';
 import dat from 'dat-gui';
 
 // Skybox image imports //
-import xpos from '../resources/images/sky/posx.jpg';
-import xneg from '../resources/images/sky/negx.jpg';
-import ypos from '../resources/images/sky/posy.jpg';
-import yneg from '../resources/images/sky/negy.jpg';
-import zpos from '../resources/images/sky/posz.jpg';
-import zneg from '../resources/images/sky/negz.jpg';
+import xpos from '../resources/images/space/posx.jpg';
+import xneg from '../resources/images/space/negx.jpg';
+import ypos from '../resources/images/space/posy.jpg';
+import yneg from '../resources/images/space/negy.jpg';
+import zpos from '../resources/images/space/posz.jpg';
+import zneg from '../resources/images/space/negz.jpg';
 // import skullModel from '../resources/models/skull.json';
 // Render Class Object //
 export default class Render {
@@ -41,19 +41,19 @@ export default class Render {
   createGUI = () => {
     this.options = {
       angle: this.angle,
-      dec: this.dec,
+      iteration: this.dec,
     };
     this.gui = new dat.GUI();
     const folderRender = this.gui.addFolder('Render Options');
 
-    folderRender.add(this.options, 'angle', 1, 255).step(1)
+    // folderRender.add(this.options, 'angle', 1, 255).step(1)
+    //   .onFinishChange((value) => {
+    //     this.options.angle = value;
+    //     this.setOptions(this.options);
+    //   });
+    folderRender.add(this.options, 'iteration', 1, 255).step(1)
       .onFinishChange((value) => {
-        this.options.angle = value;
-        this.setOptions(this.options);
-      });
-    folderRender.add(this.options, 'dec', 1, 255).step(1)
-      .onFinishChange((value) => {
-        this.options.dec = value * 1.00;
+        this.options.iteration = value * 1.00;
         this.setOptions(this.options);
       });
     folderRender.open();
@@ -63,7 +63,7 @@ export default class Render {
   setOptions = (options) => {
     this.angle = options.angle || this.angle;
     this.meshMaterial.uniforms.angle.value = this.angle;
-    this.dec = options.dec || this.dec;
+    this.dec = options.iteration || this.dec;
     this.meshMaterial.uniforms.dec.value = this.dec;
   };
 
@@ -165,13 +165,13 @@ export default class Render {
     this.geoObject.receiveShadow = true;
 
     // const objectLoader = new THREE.ObjectLoader();
-    // this.skullObject = objectLoader.parse(skullModel);
-    // this.skullObject.children[0].geometry.dynamic = true;
+    // this.geoObject = objectLoader.parse(skullModel);
+    // this.geoObject.children[0].geometry.dynamic = true;
     // // this.skullObject.children[0].rotation.set(0, 0, this.zRotation);
-    // this.skullObject.children[0].material = this.meshMaterial;
-    // this.skullObject.children[0].castShadow = true;
-    // this.skullObject.children[0].receiveShadow = true;
-    // this.scene.add(this.skullObject);
+    // this.geoObject.children[0].material = this.meshMaterial;
+    // this.geoObject.children[0].castShadow = true;
+    // this.geoObject.children[0].receiveShadow = true;
+    // this.scene.add(this.geoObject);
   };
 
   checkObjects = () => {
