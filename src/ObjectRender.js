@@ -158,8 +158,9 @@ export default class Render {
 
     this.geoObject = new THREE.Mesh(
         new THREE.SphereGeometry(3, 20, 20),
-        this.meshMaterial
+        this.meshMaterial,
     );
+
     this.scene.add(this.geoObject);
     this.geoObject.castShadow = true;
     this.geoObject.receiveShadow = true;
