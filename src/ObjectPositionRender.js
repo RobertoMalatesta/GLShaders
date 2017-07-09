@@ -1,7 +1,8 @@
+import dat from 'dat-gui';
+
 import THREE from './Three';
 import fragmentShader from './shader/position/fragmentShadert3.js';
 import vertexShader from './shader/position/vertexShadert3.js';
-import dat from 'dat-gui';
 
 // Skybox image imports //
 import xpos from '../resources/images/sky/posx.jpg';
