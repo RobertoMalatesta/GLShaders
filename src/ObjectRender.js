@@ -1,7 +1,8 @@
-import THREE from './Three';
-import fragmentShader from './shader/texture/fragmentShadert3.js';
-import vertexShader from './shader/texture/vertexShadert3.js';
 import dat from 'dat-gui';
+import THREE from './Three';
+
+import fragmentShader from './shader/texture/fragmentShadert3';
+import vertexShader from './shader/texture/vertexShadert3';
 
 // Skybox image imports //
 import xpos from '../resources/images/space/posx.jpg';
@@ -11,6 +12,7 @@ import yneg from '../resources/images/space/negy.jpg';
 import zpos from '../resources/images/space/posz.jpg';
 import zneg from '../resources/images/space/negz.jpg';
 // import skullModel from '../resources/models/skull.json';
+
 // Render Class Object //
 export default class Render {
   constructor() {
