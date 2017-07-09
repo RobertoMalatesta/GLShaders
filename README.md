@@ -1,3 +1,6 @@
+![travis ci build](https://travis-ci.org/pjkarlik/GLShaders.svg?branch=master)
+![webpack2](https://img.shields.io/badge/webpack-2.0-brightgreen.svg) ![version](https://img.shields.io/badge/version-0.0.3-yellow.svg) ![frontend](https://img.shields.io/badge/webgl-GLSL-blue.svg)
+
 # GLShaders
 
   WebGL/Three.js - My Experiments and testing renders as I learn GLSL SHADERS. The intent of this repo is to teach myself

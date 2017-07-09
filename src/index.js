@@ -1,5 +1,6 @@
-import Render from './ObjectRender.js';
+import Render from './ObjectRender';
 import { description, version } from '../version.json';
+
 require('../resources/styles/styles.css');
 
 // requestAnimationFrame polyfill
@@ -47,7 +48,7 @@ const args = [
   'background: #CCC; padding:5px 0;',
   'color: white; background: #000; padding:5px 0;',
   'color: black; background: #CCC; padding:5px 0;',
-  'background: #000; padding:5px 0;border-top-right-radius:10px;border-bottom-right-radius:10px;',
+  'background: #000; padding:5px 0;border-top-right-radius:10px;border-bottom-right-radius:10px;'
 ];
 
 window.console.log.apply(console, args);
