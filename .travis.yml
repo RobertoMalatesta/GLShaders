@@ -4,9 +4,6 @@ node_js:
   - "7.0"
   - "8.0"
 
-before_install:
-  - sudo apt-get install libpng
-
 script:
   - rm -rf dist
   - npm run webpack
