@@ -1,16 +1,16 @@
 import dat from 'dat-gui';
 
 import THREE from './Three';
-import fragmentShader from './shader/position/fragmentShadert3.js';
-import vertexShader from './shader/position/vertexShadert3.js';
+import fragmentShader from './shader/position/fragmentShadert3';
+import vertexShader from './shader/position/vertexShadert3';
 
 // Skybox image imports //
-import xpos from '../resources/images/sky/posx.jpg';
-import xneg from '../resources/images/sky/negx.jpg';
-import ypos from '../resources/images/sky/posy.jpg';
-import yneg from '../resources/images/sky/negy.jpg';
-import zpos from '../resources/images/sky/posz.jpg';
-import zneg from '../resources/images/sky/negz.jpg';
+import xpos from '../resources/images/space/posx.jpg';
+import xneg from '../resources/images/space/negx.jpg';
+import ypos from '../resources/images/space/posy.jpg';
+import yneg from '../resources/images/space/negy.jpg';
+import zpos from '../resources/images/space/posz.jpg';
+import zneg from '../resources/images/space/negz.jpg';
 import skullModel from '../resources/models/skull.json';
 // Render Class Object //
 export default class Render {
@@ -54,7 +54,7 @@ export default class Render {
       });
     folderRender.add(this.options, 'dec', 1, 255).step(1)
       .onFinishChange((value) => {
-        this.options.dec = value * 1.00;
+        this.options.dec = value;
         this.setOptions(this.options);
       });
     folderRender.open();
@@ -69,7 +69,7 @@ export default class Render {
   };
 
   stats = () => {
-    console.log(this.camera.position);
+    // console.log(this.camera.position);
   };
 
   setRender = () => {
@@ -77,7 +77,7 @@ export default class Render {
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(this.width, this.height);
     this.renderer.setPixelRatio(this.devicePixelRatio);
-    this.renderer.shadowMapEnabled = true;
+    this.renderer.shadowMap.enabled = true;
     document.body.appendChild(this.renderer.domElement);
     // Root Scene Element //
     this.scene = new THREE.Scene();
