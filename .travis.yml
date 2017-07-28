@@ -6,3 +6,10 @@ node_js:
 script:
   - rm -rf dist
   - npm run webpack
+
+deploy:
+  provider: surge
+  project: ./dist/
+  domain: glslshaders-demo.surge.sh
+
+  skip_cleanup: true
