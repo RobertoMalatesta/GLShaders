@@ -47,11 +47,11 @@ export default class Render {
     this.gui = new dat.GUI();
     const folderRender = this.gui.addFolder('Render Options');
 
-    folderRender.add(this.options, 'angle', 1, 255).step(1)
-      .onFinishChange((value) => {
-        this.options.angle = value;
-        this.setOptions(this.options);
-      });
+    // folderRender.add(this.options, 'angle', 1, 255).step(1)
+    //   .onFinishChange((value) => {
+    //     this.options.angle = value;
+    //     this.setOptions(this.options);
+    //   });
     folderRender.add(this.options, 'dec', 1, 255).step(1)
       .onFinishChange((value) => {
         this.options.dec = value;
@@ -62,7 +62,7 @@ export default class Render {
   };
 
   setOptions = (options) => {
-    this.angle = options.angle || this.angle;
+    // this.angle = options.angle || this.angle;
     this.meshMaterial.uniforms.angle.value = this.angle;
     this.dec = options.dec || this.dec;
     this.meshMaterial.uniforms.dec.value = this.dec;

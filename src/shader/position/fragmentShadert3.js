@@ -186,7 +186,7 @@ void main() {
   float o = 0.8 - (noise);
   float r = sin(noise * 15.0);
   float g = ((q.x * 1.3) + sin(noise * 15.0)) / 2.5;
-  float b = abs(noise * xang) - g;
+  float b = cos(noise * 15.0) - g;
   vec3 colorz = vec3(r, g, b);
   gl_FragColor = vec4(colorz, o);
 
