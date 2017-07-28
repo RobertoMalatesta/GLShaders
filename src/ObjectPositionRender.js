@@ -15,13 +15,13 @@ import skullModel from '../resources/models/skull.json';
 // Render Class Object //
 export default class Render {
   constructor() {
-    this.viewAngle = 55;
+    this.viewAngle = 65;
     this.near = 1;
     this.far = 10000;
     this.frame = 0;
     this.start = Date.now();
-    this.angle = 255.0;
-    this.dec = 55.0;
+    this.angle = 100.0;
+    this.dec = 225.0;
     window.addEventListener('resize', this.resize, true);
     window.addEventListener('click', this.stats, true);
     this.setViewport();
@@ -169,7 +169,6 @@ export default class Render {
   checkObjects = () => {
     this.meshMaterial.uniforms.time.value = (Date.now() - this.start) / 1000;
     this.meshMaterial.uniforms.needsUpdate = true;
-    this.skullObject.rotation.y = ((this.frame / 15) * (Math.PI / 180));
   };
 
   setViewport = () => {

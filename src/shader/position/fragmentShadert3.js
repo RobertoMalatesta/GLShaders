@@ -175,7 +175,7 @@ float dist(float a,float b,float c,float d) {
 void main() {
   vec2 q = vUv;
   vec2 rz = resolution.xy;
-  float xdec = dec * 0.01;
+  float xdec = dec * 0.015;
   float xang = angle * 0.01;
   float noise = pnoise(vec3(
     (q.x) * xdec,
@@ -185,10 +185,10 @@ void main() {
 
   float o = 0.8 - (noise);
   float r = sin(noise * 15.0);
-  float b = abs(noise * xang);
-  float g = 0.0;
+  float g = ((q.x * 1.3) + sin(noise * 15.0)) / 2.5;
+  float b = abs(noise * xang) - g;
   vec3 colorz = vec3(r, g, b);
-  gl_FragColor = vec4(colorz, 1.0);
+  gl_FragColor = vec4(colorz, o);
 
 }
 `;
